@@ -20,6 +20,7 @@ mongoose.connect(process.env.MONGODB).then(
   console.log("failed to connect");
 })
 
+
 app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
 
