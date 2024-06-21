@@ -1,31 +1,43 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react"
-import {  useState } from "react"
+import {  useDeferredValue, useState } from "react"
 import { Link ,useNavigate} from "react-router-dom"
 
+import { signInFailure , signInStart ,signInSuccess } from "../redux/user/userSlice"
+import { useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 
 
 
 const SignIn = () => {
 
   const [formData , setFormData]=  useState({})
-  const [errorMessage , setErrorMessage]  =useState(null);
-  const [loading , setLoading] = useState(false);
+  // const [errorMessage , setErrorMessage]  =useState(null);
+  // const [loading , setLoading] = useState(false);
+  //instead of these state we can use 
+
+  //since i have define loading and error in my reducer so i can import them using use sleeector 
+
+  //here i have imported error as errorMessage for better understanding
+  const {loading , error : errorMessage} = useSelector(state=>state.user)
+
+  
+
+  const dispatch = useDispatch()
 
   const navigate = useNavigate();
 
   const handleChange = (e)=>{
 
-    setFormData({...formData, [e.target.id] : e.target.value})
+    setFormData({...formData, [e.target.id] : e.target.value.trim()})
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields.');
+      return dispatch(signInFailure('please fill out all the details'))
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart()) //when sign in starts it sets loading to true and error to null
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,17 +45,16 @@ const SignIn = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        setLoading(false);
-        return setErrorMessage(data.message);
+       dispatch(signInFailure(data.message)); //if failed then error message needed to be passed as payload
       }
-      setLoading(false);
       if(res.ok) {
+        dispatch(signInSuccess(data))  //passing user data as it is going  to be payload 
         navigate('/');
       }
       
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      dispatch(signInFailure(error.message)); //if failed then error message needed to be passed as payload
+
     }
   };
   
