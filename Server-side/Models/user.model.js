@@ -15,7 +15,11 @@ const UserSchema  = new mongoose.Schema({
     type: String,
     required: true
   },
-} ,
+  profilePicture:{
+    type: String,
+    default: "https://st3.depositphotos.com/6050492/12654/v/950/depositphotos_126541236-stock-illustration-app-icon-template-vector.jpg"
+  },
+},
 {
   timestamps: true
 }
