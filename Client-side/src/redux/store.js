@@ -1,5 +1,6 @@
 import { configureStore ,combineReducers } from '@reduxjs/toolkit'
 import userReducer from './user/userSlice'
+import themeReducer from './theme/themeSlice'
 import { persistReducer, persistStore } from 'redux-persist';
 
 import storage from 'redux-persist/lib/storage'
@@ -8,6 +9,7 @@ import { version } from 'mongoose'
 
 const rootReducer = combineReducers({
   user:userReducer,
+  theme:themeReducer,
 })
 
 //persist config stores the data in local storage and does not loss it while refreshing the page
