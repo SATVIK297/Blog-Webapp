@@ -1,4 +1,5 @@
 import React from 'react'
+import {signOutSuccess} from "../redux/user/userSlice"
 
 import {
   HiUser,
@@ -16,6 +17,22 @@ import { Sidebar } from 'flowbite-react';
 
 
 export const DashSidebar = () => {
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess()); //it makes the current user null
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   const location = useLocation();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
@@ -89,6 +106,7 @@ export const DashSidebar = () => {
         <Sidebar.Item
           icon={HiArrowSmRight}
           className='cursor-pointer'
+          onClick={handleSignout}
         >
           Sign Out
         </Sidebar.Item>

@@ -16,15 +16,14 @@ import {
   updateFailure,
   deleteUserSuccess,
   deleteUserFailure,
-  deleteUserStart
+  deleteUserStart,
+  signOutSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
-
-
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const DashProfile = () => {
-  const { currentUser , error } = useSelector((state) => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileURL, setImageFileURL] = useState("");
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -33,9 +32,9 @@ const DashProfile = () => {
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
-  const [showModal , setshowModal] = useState(false)
+  const [showModal, setshowModal] = useState(false);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   //we use useref hook to update image state without re rendering the page
   const filePickerRef = useRef();
 
@@ -79,13 +78,13 @@ const DashProfile = () => {
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileURL(null);
-        setImageFileUploading(false)
+        setImageFileUploading(false);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileURL(downloadURL);
           setFormData({ ...formData, profilePicture: downloadURL });
-          setImageFileUploading(false)
+          setImageFileUploading(false);
 
           // setImageFileUploading(false);
         });
@@ -97,7 +96,6 @@ const DashProfile = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserSuccess(null);
@@ -105,47 +103,44 @@ const DashProfile = () => {
     //if formdata is empty we dont update anything
     //because formdata is an object thats why cheking length
     if (Object.keys(formData).length === 0) {
-      setUpdateUserError("No changes made")
+      setUpdateUserError("No changes made");
       return;
     }
 
-    if(imageFileUploading){
-      setUpdateUserError("please wait for image to upload")
+    if (imageFileUploading) {
+      setUpdateUserError("please wait for image to upload");
       return;
     }
 
     try {
       dispatch(updateStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
       if (!res.ok) {
         dispatch(updateFailure(data.message));
-         setUpdateUserError(data.message);
+        setUpdateUserError(data.message);
       } else {
         dispatch(updateSuccess(data));
         setUpdateUserSuccess("User's profile updated successfully");
       }
-  }catch(error){
-     dispatch(updateFailure(error.message));
-  }
-  }
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+    }
+  };
 
-
-  const handleDeleteUser = async ()=>{
-
+  const handleDeleteUser = async () => {
     setshowModal(false);
 
-
-    try{
+    try {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await res.json();
       if (!res.ok) {
@@ -153,16 +148,31 @@ const DashProfile = () => {
       } else {
         dispatch(deleteUserSuccess(data));
       }
-    }catch(error){
-      dispatch(deleteUserFailure(error.message))
-      
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
     }
+  };
 
-  }
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess()); //it makes the current user null
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
           accept="image/*"
@@ -234,47 +244,67 @@ const DashProfile = () => {
         </Button>
       </form>
       <div className=" flex justify-between mt-5">
-        <Button onClick={()=>setshowModal(true)} type="submit" gradientDuoTone="pinkToOrange" outline>
+        <Button
+          onClick={() => setshowModal(true)}
+          type="submit"
+          gradientDuoTone="pinkToOrange"
+          outline
+        >
           Delete Account
         </Button>
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
+        <Button
+          onClick={handleSignout}
+          type="submit"
+          gradientDuoTone="purpleToBlue"
+          outline
+        >
           Sign Out
         </Button>
       </div>
       {updateUserSuccess && (
-        <Alert color='success' className='mt-5'>
+        <Alert color="success" className="mt-5">
           {updateUserSuccess}
         </Alert>
       )}
-         {updateUserError && (
-        <Alert color='failure' className='mt-5'>
+      {updateUserError && (
+        <Alert color="failure" className="mt-5">
           {updateUserError}
         </Alert>
       )}
-         {error && (
-        <Alert color='failure' className='mt-5'>
+      {error && (
+        <Alert color="failure" className="mt-5">
           {error}
         </Alert>
       )}
 
-<Modal
+      <Modal
         show={showModal}
         onClose={() => setshowModal(false)}
         popup
-        size='md'
+        size="md"
       >
         <Modal.Header />
         <Modal.Body>
-          <div className='text-center'>
-            <HiOutlineExclamationCircle className='h-14 w-14 text-black-400 dark:text-gray-200 mb-4 mx-auto' />
-            <h3 className='mb-5 text-lg text-black-500 dark:text-gray-400'>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-black-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-black-500 dark:text-gray-400">
               Are you sure you want to delete your account?
             </h3>
-            <div className='flex justify-center gap-4'>
-              <Button color='failure' gradientDuoTone="pinkToOrange" outline onClick={handleDeleteUser}>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                gradientDuoTone="pinkToOrange"
+                outline
+                onClick={handleDeleteUser}
+              >
                 Yes, I'm sure
               </Button>
-              <Button color='gray' gradientDuoTone="purpleToBlue" outline onClick={() => setshowModal(false)}>
+              <Button
+                color="gray"
+                gradientDuoTone="purpleToBlue"
+                outline
+                onClick={() => setshowModal(false)}
+              >
                 No, cancel
               </Button>
             </div>
