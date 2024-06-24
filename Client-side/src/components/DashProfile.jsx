@@ -1,4 +1,4 @@
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -14,12 +14,17 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteUserSuccess,
+  deleteUserFailure,
+  deleteUserStart
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
+
 
 
 const DashProfile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser , error } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileURL, setImageFileURL] = useState("");
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -28,6 +33,7 @@ const DashProfile = () => {
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  const [showModal , setshowModal] = useState(false)
 
   const dispatch = useDispatch()
   //we use useref hook to update image state without re rendering the page
@@ -130,6 +136,29 @@ const DashProfile = () => {
   }
   }
 
+
+  const handleDeleteUser = async ()=>{
+
+    setshowModal(false);
+
+
+    try{
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(deleteUserFailure(data.message));
+      } else {
+        dispatch(deleteUserSuccess(data));
+      }
+    }catch(error){
+      dispatch(deleteUserFailure(error.message))
+      
+    }
+
+  }
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -200,12 +229,12 @@ const DashProfile = () => {
           placeholder="password"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
+        <Button type="submit" gradientDuoTone="tealToLime" outline>
           Update
         </Button>
       </form>
       <div className=" flex justify-between mt-5">
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
+        <Button onClick={()=>setshowModal(true)} type="submit" gradientDuoTone="pinkToOrange" outline>
           Delete Account
         </Button>
         <Button type="submit" gradientDuoTone="purpleToBlue" outline>
@@ -222,6 +251,36 @@ const DashProfile = () => {
           {updateUserError}
         </Alert>
       )}
+         {error && (
+        <Alert color='failure' className='mt-5'>
+          {error}
+        </Alert>
+      )}
+
+<Modal
+        show={showModal}
+        onClose={() => setshowModal(false)}
+        popup
+        size='md'
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-black-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-black-500 dark:text-gray-400'>
+              Are you sure you want to delete your account?
+            </h3>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' gradientDuoTone="pinkToOrange" outline onClick={handleDeleteUser}>
+                Yes, I'm sure
+              </Button>
+              <Button color='gray' gradientDuoTone="purpleToBlue" outline onClick={() => setshowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
