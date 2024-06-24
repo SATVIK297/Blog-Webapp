@@ -5,11 +5,14 @@ import  dotenv  from 'dotenv';
 import userRoutes from './Routes/user.route.js'
 import authRoutes from './Routes/auth.route.js'
 
+import cookieParser from 'cookie-parser';
+
 
 dotenv.config();
 const app = express();
 
 app.use(express.json())
+app.use(cookieParser)
 
 mongoose.connect(process.env.MONGODB).then(
   ()=>{
