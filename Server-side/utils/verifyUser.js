@@ -20,7 +20,7 @@ export const  verifyToken =(req,res,next)=>{
     req.user = user;
     //this next fnction is called to go to update details of user ie updateUser
     // router.put('/update:userId' ,verifyToken, updateUser)
-next
+
     next();
   });
 

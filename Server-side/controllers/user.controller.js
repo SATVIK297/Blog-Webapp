@@ -10,7 +10,6 @@ export const test = (req,res)=>{
 
 export const updateUser = async (req,res,next)=>{
    //now we ca=ompare that the id we are getting from url and jwt token are same or not
-
    if (req.user.id !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to update this user'));
   }

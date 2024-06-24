@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json())
-app.use(cookieParser)
+app.use(cookieParser())
 
 mongoose.connect(process.env.MONGODB).then(
   ()=>{
@@ -43,5 +43,5 @@ app.use((err, req, res, next) => {
 
 
 app.listen(3000,()=>{
-  console.log("server is running");
+  console.log("server is running   ");
 })
