@@ -1,42 +1,42 @@
-import {BrowserRouter , Routes ,Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from './pages/Home'
-import About from './pages/About'
-import Dashboard from './pages/Dashboard'
-import SignIn from './pages/SignIn'
-import SignUp from './pages/SignUp'
-import Projects from './pages/Projects'
-import Header from './components/Header'
-import  Footer  from './components/Footer'
-import PrivateRoute from './components/PrivateRoute'
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Dashboard from "./pages/Dashboard";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import Projects from "./pages/Projects";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import PrivateRoute from "./components/PrivateRoute";
+import CreatePost from "./pages/CreatePost";
+import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 
 function App() {
-
   return (
     <>
-      
-     <BrowserRouter>
-      <Header></Header>
-      <Routes>
+      <BrowserRouter>
+        <Header></Header>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
 
-        <Route path='/' element={<Home />}  />
-        <Route path='/about' element={<About />}  />
-
-        {/* //wrapping dashboard with private route so only when e are login we can access dashboard
-         */}
-        <Route element={<PrivateRoute />}>
-          <Route path='/dashboard' element={<Dashboard />}  />
-        </Route>
-        <Route path='/projects' element={<Projects />}  />
-        <Route path='/sign-in' element={<SignIn />}  />
-        <Route path='/sign-up' element={<SignUp />}  />
-
-      </Routes>
-      <Footer></Footer>
-     </BrowserRouter>
-    
+          {/* //wrapping dashboard with private route so only when e are login we can access dashboard
+           */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route element={<OnlyAdminPrivateRoute />}>
+            <Route path="/create-post" element={<CreatePost />} />
+          </Route>
+        </Routes>
+        <Footer></Footer>
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

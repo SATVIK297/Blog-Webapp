@@ -19,6 +19,10 @@ const UserSchema  = new mongoose.Schema({
     type: String,
     default: "https://st3.depositphotos.com/6050492/12654/v/950/depositphotos_126541236-stock-illustration-app-icon-template-vector.jpg"
   },
+  isAdmin :{
+    type:Boolean,
+    default:false
+  },
 },
 {
   timestamps: true
