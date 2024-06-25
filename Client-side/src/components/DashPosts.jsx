@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
-import { Table } from "flowbite-react"; // Ensure you import Table from the correct UI library
+import { useSelector } from "react-redux";
+import { Button, Modal, Table } from "flowbite-react"; // Ensure you import Table from the correct UI library
 import { Link } from "react-router-dom";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const DashPosts = () => {
-
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
-  const [showMore , setShowMore]=  useState(true);
+  const [showMore, setShowMore] = useState(true);
+  const [showModal, setshowModal] = useState(false);
+  const [postIdToDelete , setPostIdToDelete] = useState(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -17,7 +19,7 @@ const DashPosts = () => {
         if (res.ok) {
           // Posts we get from backend
           setUserPosts(data.posts);
-          if(data.posts.length<9){
+          if (data.posts.length < 9) {
             setShowMore(false);
           }
         }
@@ -26,39 +28,56 @@ const DashPosts = () => {
       }
     };
 
-    if (currentUser?.isAdmin) { // Added optional chaining to avoid errors if currentUser is undefined
+    if (currentUser?.isAdmin) {
+      // Added optional chaining to avoid errors if currentUser is undefined
       fetchPosts();
     }
-
   }, [currentUser]);
 
-
-  const handleShowMore =async ()=>{
+  const handleShowMore = async () => {
     const startIndex = userPosts.length;
 
-    try{
-      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+    try {
+      const res = await fetch(
+        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+      );
       const data = await res.json();
       if (res.ok) {
         // keep the previos data as well of posts
-        setUserPosts((prev)=>[...prev,...data.posts]);
-        if(data.posts.length<9){
+        setUserPosts((prev) => [...prev, ...data.posts]);
+        if (data.posts.length < 9) {
           setShowMore(false);
         }
       }
     } catch (error) {
       console.log(error.message);
     }
+  };
 
-    
 
+  const handleDeletePost = async ()=>{
+    setshowModal(false);
+    try {
+      const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
+        method: 'DELETE',
+      }
+    );
+    const data = await res.json();
+    if (res.ok) {
+      setUserPosts((prev) => prev.filter((post) => post._id !== postIdToDelete));
+    }else{
+      console.log(data.message);
+    }
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {currentUser?.isAdmin && userPosts.length > 0 ? ( // Added optional chaining
         <>
-          <Table hoverable className='shadow-md'>
+          <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date updated</Table.HeadCell>
               <Table.HeadCell>Post image</Table.HeadCell>
@@ -69,9 +88,12 @@ const DashPosts = () => {
                 <span>Edit</span>
               </Table.HeadCell>
             </Table.Head>
-            <Table.Body className='divide-y'>
+            <Table.Body className="divide-y">
               {userPosts.map((post) => (
-                <Table.Row key={post._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+                <Table.Row
+                  key={post._id}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
                   <Table.Cell>
                     {/* localw sreing to conver t=it intpo  readable format */}
                     {new Date(post.updatedAt).toLocaleDateString()}
@@ -81,13 +103,13 @@ const DashPosts = () => {
                       <img
                         src={post.image}
                         alt={post.title}
-                        className='w-20 h-10 object-cover bg-gray-500'
+                        className="w-20 h-10 object-cover bg-gray-500"
                       />
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
                     <Link
-                      className='font-medium text-gray-900 dark:text-white'
+                      className="font-medium text-gray-900 dark:text-white"
                       to={`/post/${post.slug}`}
                     >
                       {post.title}
@@ -97,17 +119,17 @@ const DashPosts = () => {
                   <Table.Cell>
                     <span
                       onClick={() => {
-                        setShowModal(true);
+                        setshowModal(true);
                         setPostIdToDelete(post._id);
                       }}
-                      className='font-medium text-red-500 hover:underline cursor-pointer'
+                      className="font-medium text-red-500 hover:underline cursor-pointer"
                     >
                       Delete
                     </span>
                   </Table.Cell>
                   <Table.Cell>
                     <Link
-                      className='text-teal-500 hover:underline'
+                      className="text-teal-500 hover:underline"
                       to={`/update-post/${post._id}`}
                     >
                       <span>Edit</span>
@@ -118,12 +140,41 @@ const DashPosts = () => {
             </Table.Body>
           </Table>
           {showMore && (
-            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7 ">Show More</button>
+            <button
+              onClick={handleShowMore}
+              className="w-full text-teal-500 self-center text-sm py-7 "
+            >
+              Show More
+            </button>
           )}
         </>
       ) : (
         <p>No posts found or you are not an admin.</p>
       )}
+      <Modal
+        show={showModal}
+        onClose={() => setshowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this post?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleDeletePost}>
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setshowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
