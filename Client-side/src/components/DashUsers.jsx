@@ -55,10 +55,12 @@ const DashUsers = () => {
   };
 
 
+  // in backend we have already create a route where a user can delete his own account
+  // for admin to delte the same account we will modify the same route only wont create new route
   const handleDeleteUser = async ()=>{
     setshowModal(false);
     try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}/${currentUser._id}`,{
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`,{
         method: 'DELETE',
        
       }
@@ -122,7 +124,7 @@ const DashUsers = () => {
                     <span
                       onClick={() => {
                         setshowModal(true);
-                         setuserIdToDelete(post._id);
+                         setuserIdToDelete(user._id);
                       }}
                       className="font-medium text-red-500 hover:underline cursor-pointer"
                     >
