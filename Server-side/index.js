@@ -29,13 +29,19 @@ app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
 app.use('/api/post' , postRoutes)
 
-
+// Catch 404 and respond with JSON
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    message: 'Endpoint not found',
+  });
+});
 
 //error handling middleware for any req,res error 
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const message = err.message || 'Internal Server Error happened';
   res.status(statusCode).json({
     success: false,
     statusCode,
