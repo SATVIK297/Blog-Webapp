@@ -5,6 +5,7 @@ import  dotenv  from 'dotenv';
 import userRoutes from './Routes/user.route.js'
 import authRoutes from './Routes/auth.route.js'
 import postRoutes from './Routes/post.route.js'
+import commentRoutes from './Routes/comment.route.js'
 
 import cookieParser from 'cookie-parser';
 
@@ -28,6 +29,7 @@ mongoose.connect(process.env.MONGODB).then(
 app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
 app.use('/api/post' , postRoutes)
+app.use('/api/comment' , commentRoutes)
 
 // Catch 404 and respond with JSON
 app.use((req, res, next) => {
