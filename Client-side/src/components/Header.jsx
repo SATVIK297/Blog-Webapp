@@ -16,7 +16,6 @@ const Header = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  console.log(searchTerm)
   useEffect(()=>{
 
       const urlParams = new URLSearchParams(location.search);
@@ -46,10 +45,16 @@ const Header = () => {
 
   const handleSubmit = (e)=>{
     e.preventDefault();
-    navigate(`/search?searchTerm=${searchTerm}`)
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('searchTerm', searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
 
 
   }
+  const handleClick = () => {
+    navigate('/search');
+  };
 
   return (
     <div>
@@ -70,12 +75,12 @@ const Header = () => {
         />
       </form>
 
-      <Button className=" w-12 h-10 lg:hidden" color='gray' pill>
+      <Button className=" w-12 h-10 lg:hidden" color='gray' pill onClick={handleClick}>
         <AiOutlineSearch />
       </Button>
       
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 hidden sm:inline " color='gray' pill onClick={()=>dispatch(toggleTheme())}>
+        <Button className="w-12 h-10  sm:inline " color='gray' pill onClick={()=>dispatch(toggleTheme())}>
           {theme === 'light' ? <FaMoon /> : <FaSun />}
           
         </Button>
