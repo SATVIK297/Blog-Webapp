@@ -10,12 +10,8 @@ import commentRoutes from './Routes/comment.route.js'
 import path from 'path'
 import cookieParser from 'cookie-parser';
 
-const __dirname = path.resolve()
 dotenv.config();
-const app = express();
 
-app.use(express.json())
-app.use(cookieParser())
 
 mongoose.connect(process.env.MONGODB).then(
   ()=>{
@@ -25,7 +21,11 @@ mongoose.connect(process.env.MONGODB).then(
 .catch(()=>{
   console.log("failed to connect");
 })
+const app = express();
 
+const __dirname = path.resolve()
+app.use(express.json())
+app.use(cookieParser())
 
 app.use('/api/user' , userRoutes)
 app.use('/api/auth' , authRoutes)
