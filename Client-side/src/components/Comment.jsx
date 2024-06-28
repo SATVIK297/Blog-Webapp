@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 //moment is a package used to show comments in real time
 import moment from 'moment'
 import { Button, Textarea } from 'flowbite-react';
-const Comment = ({comment , onLike , onEdit}) => {
+const Comment = ({comment , onLike , onEdit  ,onDelete}) => {
   const [user , setuser] = useState({})
   const {currentUser} = useSelector((state)=>state.user)
   const [isEditing , setIsEditing] = useState(false);
@@ -29,7 +29,7 @@ const Comment = ({comment , onLike , onEdit}) => {
       
   },[comment])
 
-  
+
   const handleEdit  =async()=>{
     setIsEditing(true);
     setEditedContent(comment.content)
@@ -133,7 +133,7 @@ const Comment = ({comment , onLike , onEdit}) => {
                     </button>
                     <button
                       type='button'
-                      // onClick={() => onDelete(comment._id)}
+                      onClick={() => onDelete(comment._id)}
                       className='text-gray-400 hover:text-red-500'
                     >
                       Delete
