@@ -38,36 +38,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client-side', 'dist', 'index.html'));
 });
 
-// app.post('/api/send', async (req, res) => {
-//   console.log('reacher');
-//   const { name, email, subject, message } = req.body;
 
-//   const transporter = nodemailer.createTransport({
-//     service: 'gmail',
-//     auth: {
-//       user: process.env.EMAIL_USER,
-//       pass: process.env.EMAIL_PASS,
-//     },
-//   });
-
-//   const mailOptions = {
-//     from: email,
-//     to: process.env.EMAIL_USER,
-//     subject: subject,
-//     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-//   };
-
-//   transporter.sendMail(mailOptions, (error, info) => { 
-//     if (error) {
-//       console.error('Error sending email:', error);
-//       return res.status(500).json({ error: 'Error sending email' });
-//     }
-//     console.log('Email sent:', info.response);
-//     res.status(200).json({ message: 'Email sent successfully' });
-//   });
-// });
-
-//error handling middleware for any req,res error 
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -80,6 +51,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(3000,()=>{
+app.listen(process.env.PORT ||3000,()=>{
   console.log("server is running   ");
 })
