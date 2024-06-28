@@ -1,7 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose';
 import  dotenv  from 'dotenv';
-
+import nodemailer from 'nodemailer'
 import userRoutes from './Routes/user.route.js'
 import authRoutes from './Routes/auth.route.js'
 import postRoutes from './Routes/post.route.js'
@@ -31,11 +31,33 @@ app.use('/api/auth' , authRoutes)
 app.use('/api/post' , postRoutes)
 app.use('/api/comment' , commentRoutes)
 
-// Catch 404 and respond with JSON
-app.use((req, res, next) => {
-  res.status(404).json({
-    success: false,
-    message: 'Endpoint not found',
+
+app.post('/api/send', async (req, res) => {
+  console.log('reacher');
+  const { name, email, subject, message } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: email,
+    to: process.env.EMAIL_USER,
+    subject: subject,
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => { 
+    if (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ error: 'Error sending email' });
+    }
+    console.log('Email sent:', info.response);
+    res.status(200).json({ message: 'Email sent successfully' });
   });
 });
 

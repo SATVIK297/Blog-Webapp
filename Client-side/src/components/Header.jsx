@@ -47,7 +47,7 @@ const Header = () => {
   const handleSubmit = (e)=>{
     e.preventDefault();
     navigate(`/search?searchTerm=${searchTerm}`)
-    
+
 
   }
 
@@ -120,7 +120,7 @@ const Header = () => {
           <Link to='/about'>About</Link>
         </Navbar.Link>
         <Navbar.Link active={path === '/projects'} as={'div'}>
-          <Link to='/projects'>Projects</Link>
+          <Link to='/projects'>Contact Us</Link>
         </Navbar.Link>
       </Navbar.Collapse>
         </Navbar>

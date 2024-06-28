@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+import {getFirestore} from "firebase/firestore"
 const firebaseConfig = {
 
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,3 +17,5 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+
+export const db = getFirestore()
