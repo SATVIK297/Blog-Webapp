@@ -49,7 +49,7 @@ export const DashSidebar = () => {
     <Sidebar className='w-full md:w-56'>
     <Sidebar.Items>
       <Sidebar.ItemGroup className='flex flex-col gap-1'>
-       
+      <Link to='/dashboard?tab=dash'>
             <Sidebar.Item
               active={tab === 'dash' || !tab}
               icon={HiChartPie}
@@ -57,7 +57,7 @@ export const DashSidebar = () => {
             >
               Dashboard
             </Sidebar.Item>
-        
+            </Link>
         
         <Link to='/dashboard?tab=profile'>
           <Sidebar.Item

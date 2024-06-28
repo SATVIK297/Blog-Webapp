@@ -5,6 +5,7 @@ import DashProfile from '../components/DashProfile';
 import DashPosts from '../components/DashPosts';
 import DashUsers from '../components/DashUsers';
 import DashComments from '../components/DashComments';
+import DashboardCom from '../components/DashboardCom';
 //we use uselocation to get params value from url
 
 
@@ -33,6 +34,8 @@ const Dashboard = () => {
     {tab === 'users' && <DashUsers/>}
     {/* comments */}
     {tab === 'comments' && <DashComments/>}
+    {/* dashboard component */}
+    {tab === 'dash' && <DashboardCom/>}
   </div>
   )
 }
