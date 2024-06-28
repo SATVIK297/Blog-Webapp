@@ -1,7 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose';
 import  dotenv  from 'dotenv';
-import nodemailer from 'nodemailer'
 import userRoutes from './Routes/user.route.js'
 import authRoutes from './Routes/auth.route.js'
 import postRoutes from './Routes/post.route.js'

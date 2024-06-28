@@ -7,6 +7,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.3",
     "nodemailer": "^6.9.14",
+    "path": "^0.12.7",
     "react-router-dom": "^6.23.1"
   },
   "name": "blog-project",
@@ -16,7 +17,7 @@
   "scripts": {
     "dev": "nodemon Server-side/index.js",
     "start": "node Server-side/index.js",
-    "build" : "npm install && npm install --prefix Client-side && npm run build --prefix Client-side"
+    "build": "npm install && npm install --prefix Client-side && npm run build --prefix Client-side"
   },
   "keywords": [],
   "author": "",
