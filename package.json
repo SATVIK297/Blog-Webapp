@@ -15,7 +15,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon Server-side/index.js",
-    "start": "node Server-side/index.js"
+    "start": "node Server-side/index.js",
+    "build" : "npm install && npm install --prefix Client-side && npm run build --prefix Client-side"
   },
   "keywords": [],
   "author": "",

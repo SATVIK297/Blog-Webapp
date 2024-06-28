@@ -7,9 +7,10 @@ import authRoutes from './Routes/auth.route.js'
 import postRoutes from './Routes/post.route.js'
 import commentRoutes from './Routes/comment.route.js'
 
+import path from 'path'
 import cookieParser from 'cookie-parser';
 
-
+const __dirname = path.resolve()
 dotenv.config();
 const app = express();
 
@@ -31,35 +32,41 @@ app.use('/api/auth' , authRoutes)
 app.use('/api/post' , postRoutes)
 app.use('/api/comment' , commentRoutes)
 
+app.use(express.static(path.join(__dirname, '/client/dist')))
 
-app.post('/api/send', async (req, res) => {
-  console.log('reacher');
-  const { name, email, subject, message } = req.body;
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: email,
-    to: process.env.EMAIL_USER,
-    subject: subject,
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => { 
-    if (error) {
-      console.error('Error sending email:', error);
-      return res.status(500).json({ error: 'Error sending email' });
-    }
-    console.log('Email sent:', info.response);
-    res.status(200).json({ message: 'Email sent successfully' });
-  });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
+
+// app.post('/api/send', async (req, res) => {
+//   console.log('reacher');
+//   const { name, email, subject, message } = req.body;
+
+//   const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//       user: process.env.EMAIL_USER,
+//       pass: process.env.EMAIL_PASS,
+//     },
+//   });
+
+//   const mailOptions = {
+//     from: email,
+//     to: process.env.EMAIL_USER,
+//     subject: subject,
+//     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+//   };
+
+//   transporter.sendMail(mailOptions, (error, info) => { 
+//     if (error) {
+//       console.error('Error sending email:', error);
+//       return res.status(500).json({ error: 'Error sending email' });
+//     }
+//     console.log('Email sent:', info.response);
+//     res.status(200).json({ message: 'Email sent successfully' });
+//   });
+// });
 
 //error handling middleware for any req,res error 
 
